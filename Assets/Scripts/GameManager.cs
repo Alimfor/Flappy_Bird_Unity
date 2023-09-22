@@ -9,9 +9,15 @@ public class GameManager : MonoBehaviour
 
     public Text scoreText;
 
+    public Text resultScoreText;
+
+    public Text bestResultScoreText;
+
     public GameObject playButton;
 
     public GameObject gameOver;
+
+    public GameObject resultTable;
 
     private int score;
 
@@ -29,6 +35,7 @@ public class GameManager : MonoBehaviour
 
         playButton.SetActive(false);
         gameOver.SetActive(false);
+        resultTable.SetActive(false);
 
         Time.timeScale = 1f;
         player.enabled = true;
@@ -47,12 +54,38 @@ public class GameManager : MonoBehaviour
         player.enabled = false;
     }
 
+    public void Start()
+    {
+        bestResultScoreText.text = GetBestScore();
+    }
+
     public void GameOver()
     {
+        resultScoreText.text = scoreText.text;
+
         gameOver.SetActive(true);
         playButton.SetActive(true);
+        resultTable.SetActive(true);
+
+        string bestScore = GetBestScore();
+
+        if (int.Parse(bestScore) < int.Parse(resultScoreText.text))
+        {
+            SetInt("bestScore", int.Parse(resultScoreText.text));
+            bestResultScoreText.text = resultScoreText.text;
+        }
 
         Pause();
+    }
+
+    public void SetInt(string KeyName, int Value)
+    {
+        PlayerPrefs.SetInt(KeyName, Value);
+    }
+
+    public string GetBestScore()
+    {
+        return PlayerPrefs.GetInt("bestScore").ToString();
     }
 
     public void IncreaseScore()
